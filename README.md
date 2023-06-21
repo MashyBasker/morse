@@ -18,5 +18,5 @@ $ cargo run -- --mode file --target <file_path>
 
 ## Plans for the future
 
-[] Add decryption utility
-[] Publish to `crates.io` as an application
+- [] Add decryption utility
+- [] Publish to `crates.io` as an application
