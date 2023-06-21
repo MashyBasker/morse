@@ -4,6 +4,9 @@ CLI utility to convert ASCII text to Morse code, made for educational and recrea
 
 ## How to use
 
+- Install [Rust](rust-lang.org/)
+- Clone the repo and `cd` into it
+
 **For text mode**
 ```console
 $ cargo run -- --mode text --target <text_you_want_to_convert>
