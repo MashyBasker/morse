@@ -1,24 +1,32 @@
 mod utils;
 
-use std::env;
+use clap::Parser;
 use std::fs;
 use std::io;
 use std::io::Write;
-use std::process::exit;
+use anyhow::Context;
+
+#[derive(Parser)]
+#[command(name = "morse")]
+#[command(author = "Maharshi Basu <basumaharshi10@gmail.com>")]
+#[command(version = "1.0")]
+#[command(about = "Morse translator", long_about = None)]
+struct Cli {
+    #[arg(long)]
+    mode: String,
+    #[arg(long)]
+    target: String,
+}
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    if args.len() < 3 {
-        eprintln!("Error: Follow the correct usage pattern");
-        exit(1);
-    } 
-    if args[1] == "encrypt" {
-        let msg_enc: Vec<String> = encrypt_morse(&args[2]);
-        display_no_quotes(msg_enc);
-    } else if args[1] == "encrypt-file" {
-        display_file_morse(file_morse(&args[2]));
+    let cli = Cli::parse();
+    if cli.mode == "text" {
+        display_no_quotes(encrypt_morse(&cli.target));
+    } else if cli.mode == "file" {
+        display_file_morse(file_morse(&cli.target));
+    } else {
+        eprintln!("Error: Invalid arguments. Aborting");
     }
-    
 }
 
 fn encrypt_morse(msg: &String) -> Vec<String> {
@@ -28,7 +36,8 @@ fn encrypt_morse(msg: &String) -> Vec<String> {
 }
 
 fn file_morse(filename: &String) -> Vec<Vec<String>> {
-    let f_content = fs::read_to_string(filename).expect("Error: Could not read file");
+    let f_content = fs::read_to_string(filename)
+        .with_context(|| format!("Error: Could not read file `{}`", filename)).unwrap();
     let mut file_enc: Vec<Vec<String>> = Vec::new();
     for l in f_content.lines() {
         file_enc.push(encrypt_morse(&l.to_string()));
